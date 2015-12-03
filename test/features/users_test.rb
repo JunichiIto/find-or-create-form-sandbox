@@ -10,8 +10,13 @@ class UsersTest < Capybara::Rails::TestCase
     assert page.has_selector?('h1', text: 'New User')
 
     # 新しいグループを作成する
-    fill_in 'Name', with: 'Alice'
     fill_in 'Group name', with: 'Tomato'
+    # バリデーションエラーが起きても入力値が残る
+    click_on 'Create User'
+    assert page.has_content?("Name can't be blank")
+    assert page.has_field?('Group name', with: 'Tomato')
+    # 登録実行
+    fill_in 'Name', with: 'Alice'
     click_on 'Create User'
 
     assert page.has_content?('User was successfully created.')
