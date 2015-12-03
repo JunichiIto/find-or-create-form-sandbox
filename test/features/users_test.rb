@@ -9,6 +9,7 @@ class UsersTest < Capybara::Rails::TestCase
     click_link 'New User'
     assert page.has_selector?('h1', text: 'New User')
 
+    # 新しいグループを作成する
     fill_in 'Name', with: 'Alice'
     fill_in 'Group name', with: 'Tomato'
     click_on 'Create User'
@@ -16,5 +17,23 @@ class UsersTest < Capybara::Rails::TestCase
     assert page.has_content?('User was successfully created.')
     alice = User.find_by_name('Alice')
     assert_equal 'Tomato', alice.group.name
+
+    # 既存のグループを割り当てる
+    click_on 'Edit'
+    assert page.has_selector?('h1', text: 'Editing User')
+    assert page.has_field?('Group name', with: 'Tomato')
+    fill_in 'Group name', with: 'Potato'
+    click_on 'Update User'
+    assert page.has_content?('User was successfully updated.')
+    assert_equal 'Potato', alice.reload.group.name
+
+    # グループの割り当てを解除する
+    click_on 'Edit'
+    assert page.has_selector?('h1', text: 'Editing User')
+    assert page.has_field?('Group name', with: 'Potato')
+    fill_in 'Group name', with: ''
+    click_on 'Update User'
+    assert page.has_content?('User was successfully updated.')
+    assert_nil alice.reload.group
   end
 end

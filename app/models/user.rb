@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
   def find_or_create_group
     if group_name.present?
       self.group = Group.find_or_create_by!(name: group_name)
+    else
+      self.group = nil
     end
   end
 end

@@ -19,6 +19,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    @user.group_name = @user.group.try(:name)
   end
 
   # POST /users
